@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Pro Admin Dashboard — Single Bundle</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="./Admin Dashboard.css">
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <button id="collapseBtn" title="Toggle sidebar">⫶</button>
+      <span class="brand-text">ADMIN PRO</span>
+    </div>
+
+    <nav class="nav">
+      <button class="nav-link active" data-page="dashboard">📊 Dashboard</button>
+      <button class="nav-link" data-page="users">👥 Users</button>
+      <button class="nav-link" data-page="products">📦 Products</button>
+      <button class="nav-link" data-page="analytics">📈 Analytics</button>
+      <button class="nav-link admin-only" data-page="settings">⚙️ Settings</button>
+    </nav>
+
+    <div class="role-box">
+      <label>Role:</label>
+      <select id="roleSelect">
+        <option value="admin">Admin</option>
+        <option value="manager">Manager</option>
+        <option value="staff">Staff</option>
+      </select>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+    <!-- HEADER -->
+    <header class="topbar">
+      <div class="left">
+        <button id="menuBtn" class="icon">☰</button>
+        <h1 class="page-title">Dashboard</h1>
+      </div>
+
+      <div class="right">
+        <input id="globalSearch" placeholder="Search (users/products)..." />
+        <div class="notif" id="notifWrap">
+          <button id="notifBtn" class="icon">🔔 <span id="notifBadge" class="badge">0</span></button>
+          <div id="notifList" class="notif-list"></div>
+        </div>
+
+        <button id="themeToggle" class="icon">🌓</button>
+      </div>
+    </header>
+
+    <!-- PAGES -->
+    <!-- Dashboard -->
+    <section id="dashboard" class="page active-page">
+      <div class="cards">
+        <div class="card">
+          <div class="card-title">Users</div>
+          <div id="statUsers" class="card-value">0</div>
+        </div>
+        <div class="card">
+          <div class="card-title">Products</div>
+          <div id="statProducts" class="card-value">0</div>
+        </div>
+        <div class="card">
+          <div class="card-title">Sales</div>
+          <div id="statSales" class="card-value">$0</div>
+        </div>
+      </div>
+
+      <div class="charts-grid">
+        <div class="chart-card">
+          <div class="chart-head">
+            <h3>Sales</h3>
+            <select id="chartRange">
+              <option value="daily">Daily</option>
+              <option value="weekly">Weekly</option>
+              <option value="monthly">Monthly</option>
+            </select>
+          </div>
+          <canvas id="salesChart"></canvas>
+        </div>
+
+        <div class="chart-card">
+          <div class="chart-head">
+            <h3>New Users</h3>
+            <button id="refreshUsersChart" class="mini">Refresh</button>
+          </div>
+          <canvas id="usersChart"></canvas>
+        </div>
+      </div>
+    </section>
+
+    <!-- Users -->
+    <section id="users" class="page">
+      <div class="page-head">
+        <h2>Users</h2>
+        <div>
+          <button class="btn" id="addUserBtn">+ Add User</button>
+          <button class="btn" id="exportUsersBtn">Export CSV</button>
+        </div>
+      </div>
+
+      <div class="table-controls">
+        <input id="userSearch" placeholder="Search users..." />
+      </div>
+
+      <div class="table-wrap">
+        <table id="usersTable" class="data-table">
+          <thead>
+            <tr>
+              <th data-sort="name">Name ↕</th>
+              <th data-sort="email">Email ↕</th>
+              <th data-sort="role">Role ↕</th>
+              <th>Joined</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+
+      <div class="pagination" id="usersPagination"></div>
+    </section>
+
+    <!-- Products -->
+    <section id="products" class="page">
+      <div class="page-head">
+        <h2>Products</h2>
+        <div>
+          <button class="btn" id="addProductBtn">+ Add Product</button>
+          <button class="btn" id="exportProductsBtn">Export CSV</button>
+        </div>
+      </div>
+
+      <div class="table-controls">
+        <input id="productSearch" placeholder="Search products..." />
+      </div>
+
+      <div class="table-wrap">
+        <table id="productsTable" class="data-table">
+          <thead>
+            <tr>
+              <th data-sort="pname">Name ↕</th>
+              <th data-sort="price">Price ↕</th>
+              <th data-sort="category">Category ↕</th>
+              <th>Image</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+
+      <div class="pagination" id="productsPagination"></div>
+    </section>
+
+    <!-- Analytics -->
+    <section id="analytics" class="page">
+      <h2>Analytics & Logs</h2>
+      <div class="logs">
+        <div>
+          <h3>Activity Logs</h3>
+          <ul id="logList"></ul>
+        </div>
+        <div>
+          <h3>Notifications (live demo)</h3>
+          <div id="notifDemo">No recent alerts</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Settings (admin-only) -->
+    <section id="settings" class="page">
+      <h2>Settings</h2>
+      <p>Demo RBAC and theme persistence are enabled.</p>
+      <button id="clearDataBtn" class="btn danger">Clear Local Data</button>
+    </section>
+  </main>
+
+  <!-- MODALS -->
+  <div id="modal" class="modal">
+    <div class="modal-card">
+      <h3 id="modalTitle">Modal</h3>
+
+      <div id="modalBody"></div>
+
+      <div class="modal-actions">
+        <button id="modalCancel" class="btn">Cancel</button>
+        <button id="modalSave" class="btn primary">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCRIPTS -->
+  <script src="script.js"></script>
+  <script src="./Admin Dashboard.js"></script>
+</body>
+</html>
